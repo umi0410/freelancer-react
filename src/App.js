@@ -6,8 +6,8 @@ import {Container, Row, Col, Button, Form, Image} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from "axios";
 
-// const rootEndpoint = "http://localhost:1323"
-const rootEndpoint = "http://go.oss.jinsu.me:1323"
+const HOST = "go.oss.jinsu.me"
+const PORT = 1323
 
 class App extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ class App extends React.Component {
   componentDidMount(){
     let self = this;
     (async ()=>{
-      let results = await axios.get(`${rootEndpoint}/api/freelancers`)
+      let results = await axios.get(`http://${HOST}:${PORT}/api/freelancers`)
       // console.log(results)
       self.setState(state=>{
         return {
@@ -31,7 +31,7 @@ class App extends React.Component {
     
 
     if (window["WebSocket"]) {
-      let conn = new WebSocket(`ws://${rootEndpoint}/ws`);
+      let conn = new WebSocket(`ws://${HOST}:${PORT}/ws`);
 
       conn.onclose = function (evt) {
           var item = document.createElement("div");
@@ -72,14 +72,14 @@ changeNewTasksNumber = (evt)=>{
 }
 
 addFreelancers = async ()=>{
-  let result = await axios.post(`http://${rootEndpoint}/api/freelancers`, {
+  let result = await axios.post(`http://${HOST}:${PORT}/api/freelancers`, {
     Number: this.state['newFreelancersNumber'],
   })
   console.log(result)
 }
 
 addTasks = async ()=>{
-  let result = await axios.post(`http://${rootEndpoint}/api/tasks`, {
+  let result = await axios.post(`http://${HOST}:${PORT}/api/tasks`, {
     Number: this.state['newTasksNumber'],
   })
   console.log(result)
