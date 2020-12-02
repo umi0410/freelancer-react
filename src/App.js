@@ -1,5 +1,5 @@
-import logo from './logo.svg';
-import io from 'socket.io-client';
+// import logo from './logo.svg';
+// import io from 'socket.io-client';
 import './App.css';
 import React from 'react'
 import {Container, Row, Col, Button, Form, Image} from 'react-bootstrap'
@@ -28,7 +28,7 @@ class App extends React.Component {
         ...state, freelancers:  results.data.sort((f)=>f['ID'])
       }})
     })()
-    
+
 
     if (window["WebSocket"]) {
       let conn = new WebSocket(`ws://${HOST}:${PORT}/ws`);
@@ -37,13 +37,13 @@ class App extends React.Component {
           var item = document.createElement("div");
           item.innerHTML = "<b>Connection closed.</b>";
       };
-      
+
       conn.onmessage = function (evt) {
         let freelancer = JSON.parse(evt.data)
         // console.log(evt)
         let freelancers = self.state['freelancers']
-        let index = freelancers.findIndex((f)=>f['ID']==freelancer['ID'])
-        if(index == -1){
+        let index = freelancers.findIndex((f)=>f['ID']===freelancer['ID'])
+        if(index === -1){
           freelancers.push(freelancer)
         } else{
           freelancers[index] = freelancer
@@ -53,7 +53,7 @@ class App extends React.Component {
         })
       };
   } else {
-      var item = document.createElement("div");
+      const item = document.createElement("div");
       item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
   }
 }
@@ -87,7 +87,7 @@ addTasks = async ()=>{
 
   render() {
     return (
-      <div className="mt-5 mb-5">        
+      <div className="mt-5 mb-5">
         <Container>
           <Row>
             <Col>
@@ -106,7 +106,7 @@ addTasks = async ()=>{
               Freelancer를 더 고용할 수도 있고, 자를 수도 있습니다. 마찬가지로 작업(Task)를 추가할 수도 있습니다.</p>
             </Col>
           </Row>
-          
+
         </Container>
         <Container>
           <Row>
@@ -140,15 +140,15 @@ addTasks = async ()=>{
                   ID: {freelancer['ID']}<br/>
                   Name: {freelancer['Name']}<br/>
                   State: {freelancer['State']}<br/>
-                  
+
                   TasksDone: {freelancer['TasksDone']}<br/>
                   WorkingHour: {freelancer['WorkingHour']}</p>
                   {/* <p>{freelancer['ID']}</p> */}
               </Col>
-            })}  
+            })}
           </Row>
         </Container>
-        
+
       </div>
     )
   }
