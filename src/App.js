@@ -1,11 +1,13 @@
 import logo from './logo.svg';
-// import io from 'socket.io-client';
+import io from 'socket.io-client';
 import './App.css';
 import React from 'react'
 import {Container, Row, Col, Button, Form, Image} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from "axios";
-const rootEndpoint = "localhost:1323"
+
+// const rootEndpoint = "http://localhost:1323"
+const rootEndpoint = "http://go.oss.jinsu.me:1323"
 
 class App extends React.Component {
   constructor(props) {
@@ -19,8 +21,8 @@ class App extends React.Component {
   componentDidMount(){
     let self = this;
     (async ()=>{
-      let results = await axios.get(`http://${rootEndpoint}/api/freelancers`)
-      console.log(results)
+      let results = await axios.get(`${rootEndpoint}/api/freelancers`)
+      // console.log(results)
       self.setState(state=>{
         return {
         ...state, freelancers:  results.data.sort((f)=>f['ID'])
@@ -38,7 +40,7 @@ class App extends React.Component {
       
       conn.onmessage = function (evt) {
         let freelancer = JSON.parse(evt.data)
-        console.log(freelancer)
+        // console.log(evt)
         let freelancers = self.state['freelancers']
         let index = freelancers.findIndex((f)=>f['ID']==freelancer['ID'])
         if(index == -1){
@@ -46,7 +48,6 @@ class App extends React.Component {
         } else{
           freelancers[index] = freelancer
         }
-        console.log(freelancers)
         self.setState(state=>{return {
           ...state, freelancers:  freelancers.sort((f)=>f['ID'])}
         })
@@ -86,17 +87,28 @@ addTasks = async ()=>{
 
   render() {
     return (
-      <div>        
+      <div className="mt-5 mb-5">        
         <Container>
           <Row>
             <Col>
             <h1>Freelancer::Go concurrenct worker simulation</h1>
-
-            <p>이 프로그램은 Go에서의 concurrency pattern 중 하나인 concurrent worker pool pattern을 직관적으로 이해할 수 있게 도와줍니다.</p>
+            </Col>
+          </Row>
+          <Row className="justify-content-md-center">
+            <Col sm={6}>
+            <Image  src= "/workers.png" fluid />
+            </Col>
+          </Row>
+            <Row>
+              <Col>
+            <p>이 프로그램은 Go에서의 concurrency pattern 중 하나인 worker pool pattern을 직관적으로 이해할 수 있게 도와줍니다.</p>
             <p>이 프로그램 내에서 우리 귀여운 Gopher들은 Freelancer로 활동합니다. 일이 있으면 일을 하고 없으면 쉽니다.
               Freelancer를 더 고용할 수도 있고, 자를 수도 있습니다. 마찬가지로 작업(Task)를 추가할 수도 있습니다.</p>
             </Col>
           </Row>
+          
+        </Container>
+        <Container>
           <Row>
             <Col>
               <h2>현재 고용중인 프리랜서 Gopher 목록</h2>
