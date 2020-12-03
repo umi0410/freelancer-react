@@ -6,8 +6,9 @@ import {Container, Row, Col, Button, Form, Image} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from "axios";
 import websocketHandler from './websocketHandler';
-const HOST = "go.oss.jinsu.me"
-// const HOST = "localhost"
+import { io, Socket } from 'socket.io-client';
+// const HOST = "go.oss.jinsu.me"
+const HOST = "localhost"
 const PORT = 1323
 
 class App extends React.Component {

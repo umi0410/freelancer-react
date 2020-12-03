@@ -41,6 +41,10 @@
   border: 2px solid #0275d8;
 }
 
+.to_be_fired{
+  border: 2px solid red;
+}
+
 .working>p {
   color: #0275d8;
 }
