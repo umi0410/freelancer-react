@@ -5,8 +5,9 @@ import React from 'react'
 import {Container, Row, Col, Button, Form, Image} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from "axios";
-
+import websocketHandler from './websocketHandler';
 const HOST = "go.oss.jinsu.me"
+// const HOST = "localhost"
 const PORT = 1323
 
 class App extends React.Component {
@@ -29,7 +30,6 @@ class App extends React.Component {
       }})
     })()
 
-
     if (window["WebSocket"]) {
       let conn = new WebSocket(`ws://${HOST}:${PORT}/ws`);
 
@@ -39,18 +39,7 @@ class App extends React.Component {
       };
 
       conn.onmessage = function (evt) {
-        let freelancer = JSON.parse(evt.data)
-        // console.log(evt)
-        let freelancers = self.state['freelancers']
-        let index = freelancers.findIndex((f)=>f['ID']===freelancer['ID'])
-        if(index === -1){
-          freelancers.push(freelancer)
-        } else{
-          freelancers[index] = freelancer
-        }
-        self.setState(state=>{return {
-          ...state, freelancers:  freelancers.sort((f)=>f['ID'])}
-        })
+        websocketHandler.messageHandler(self, evt);
       };
   } else {
       const item = document.createElement("div");
