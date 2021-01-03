@@ -16,6 +16,8 @@ const Gopher = () => {
     let message = JSON.parse(event.data);
     if (message.Type === "freelancer_state_report") {
       onWorkerStateReportHandler(freelancer, message);
+    } else if(message.Type == "freelancer_fire_report"){
+      onWorkerRemoveHandler(freelancers, message)
     }
   };
 
@@ -29,9 +31,28 @@ const Gopher = () => {
     } else {
       freelancers[index] = freelancer;
     }
-    const newFreelancer = freelancers.sort((f) => f["ID"]);
-    setFreelancers(newFreelancer);
+
+    const newFreelancers = []
+    for (let f of freelancers){
+      newFreelancers.push(f)
+    }
+    newFreelancers.sort((f) => f["ID"]);
+
+    setFreelancers(newFreelancers);
   };
+
+  const onWorkerRemoveHandler = (freelancers, message) => {
+    let freelancer = message.Data
+    console.log(freelancer)
+    let index = freelancers.findIndex((f)=>f['ID']==freelancer['ID'])
+    if(index == -1){
+        freelancers.push(freelancer)
+    } else{
+        freelancers[index] = freelancer
+    }
+
+    setFreelancers(freelancers.filter((f)=>f['ID'] != freelancer['ID']))
+}
 
   useEffect(() => {
     (async () => {
