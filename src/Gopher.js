@@ -4,7 +4,7 @@ import { Container, Row, Col, Button, Form, Image } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
 import axios from "axios";
 import websocketHandler from "./websocketHandler";
-const HOST = "go.oss.jinsu.me";
+const HOST = "localhost";
 const PORT = 1323;
 
 const Gopher = () => {
@@ -12,21 +12,40 @@ const Gopher = () => {
   const [newFreelancersNumber, setNewFreelancersNumber] = useState(1);
   const [newTasksNumber, setNewTasksNumber] = useState(1);
 
+  const messageHandler = (freelancer, event) => {
+    let message = JSON.parse(event.data);
+    if (message.Type === "freelancer_state_report") {
+      onWorkerStateReportHandler(freelancer, message);
+    }
+  };
+
+  const onWorkerStateReportHandler = (data, message) => {
+    let freelancer = message.Data;
+    let freelancers = data;
+
+    let index = freelancers.findIndex((f) => f["ID"] === freelancer["ID"]);
+    if (index === -1) {
+      freelancers.push(freelancer);
+    } else {
+      freelancers[index] = freelancer;
+    }
+    const newFreelancer = freelancers.sort((f) => f["ID"]);
+    setFreelancers(newFreelancer);
+  };
+
   useEffect(() => {
     (async () => {
       let results = await axios.get(`http://${HOST}:${PORT}/api/freelancers`);
-      // console.log(results)
       setFreelancers(results.data.sort((f) => f["ID"]));
     })();
-
     if (window["WebSocket"]) {
       let conn = new WebSocket(`ws://${HOST}:${PORT}/ws`);
       conn.onclose = function (evt) {
-        let item = document.createElement("div");
+        const item = document.createElement("div");
         item.innerHTML = "<b>Connection closed.</b>";
       };
       conn.onmessage = function (evt) {
-        websocketHandler.messageHandler(evt.target, evt);
+        messageHandler(freelancers, evt);
       };
     } else {
       const item = document.createElement("div");
@@ -35,29 +54,26 @@ const Gopher = () => {
   }, []);
 
   const onChangeNewFreelancersNumber = (e) => {
-    console.log(parseInt(e.target.value));
     const newFreelancerNumber = parseInt(e.target.value);
     setNewFreelancersNumber(newFreelancerNumber);
   };
 
   const onChangeNewTasksNumber = (e) => {
-    console.log(parseInt(e.target.value));
     const newTaskNumber = parseInt(e.target.value);
     setNewTasksNumber(newTaskNumber);
   };
 
   const addFreelancers = async () => {
-    let result = await axios.post(`http://${HOST}:${PORT}/api/freelancers`, {
+    await axios.post(`http://${HOST}:${PORT}/api/freelancers`, {
       Number: newFreelancersNumber,
     });
-    console.log(result);
   };
 
   const addTasks = async () => {
-    let result = await axios.post(`http://${HOST}:${PORT}/api/tasks`, {
+    await axios.post(`http://${HOST}:${PORT}/api/tasks`, {
       Number: newTasksNumber,
     });
-    console.log(result);
+    // console.log(result);
   };
 
   return (
